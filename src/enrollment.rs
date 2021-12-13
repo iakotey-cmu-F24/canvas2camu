@@ -8,15 +8,6 @@ pub(crate) fn parse_enrollment(filename: &str) -> HashMap<String, String> {
     let mut data = HashMap::new();
 
     if let Ok(range) = workbook.worksheet_range("Detailed Enrollment List") {
-        let (start, end) = {
-            let total_cells = range.get_size().0 * range.get_size().1;
-            let last_row = total_cells / config::ENROLLMENT_LAST_COLUMN;
-
-            (
-                (config::ENROLLMENT_HEADER_ROW, 0 as usize),
-                (last_row, config::ENROLLMENT_LAST_COLUMN),
-            )
-        };
 
         for row in range.rows().skip(config::ENROLLMENT_HEADER_ROW) {
             data.insert(
