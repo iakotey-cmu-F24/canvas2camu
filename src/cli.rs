@@ -1,6 +1,7 @@
 use argparse::{ArgumentParser, Store};
 
 ///Struct to hold CLI arguments
+#[derive(Debug)]
 pub(crate) struct ArgStruct {
     enrollment: String,
     gradebook: String,
