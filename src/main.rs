@@ -1,3 +1,6 @@
+mod cli;
+use cli::parse_args;
+
 fn main() {
-    println!("Hello, world!");
+    let args = parse_args();
 }
