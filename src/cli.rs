@@ -3,9 +3,9 @@ use argparse::{ArgumentParser, Store};
 ///Struct to hold CLI arguments
 #[derive(Debug)]
 pub(crate) struct ArgStruct {
-    enrollment: String,
-    gradebook: String,
-    output_dir: String,
+    pub(crate) enrollment: String,
+    pub(crate) gradebook: String,
+    pub(crate) output_dir: String,
 }
 impl ArgStruct {
     
