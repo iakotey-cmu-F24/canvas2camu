@@ -10,3 +10,11 @@ pub(crate) const ENROLLMENT_EMAIL_COL_INDEX: usize = 19;
 
 /// Index of column containing Student Id data. i.e. Column B
 pub(crate) const ENROLLMENT_STUD_ID_COL_INDEX: usize = 1;
+
+pub(crate) const GRADEBOOK_USELESS_COL_COUNT: usize = 2;
+pub(crate) const GRADEBOOK_USELESS_LINE_COUNT: usize = 2;
+
+pub(crate) const GRADEBOOK_NON_GRADE_COL_COUNT: usize = 4;
+
+pub(crate) const GRADEBOOK_CSV_DELIMITER: char = ',';
+pub(crate) const GRADEBOOK_EMAIL_COL_INDEX: usize = 3;
