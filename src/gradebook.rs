@@ -6,7 +6,7 @@ use std::io::BufReader;
 
 pub(crate) fn parse_gradebook_file(
     filename: &str,
-) -> HashMap<String, (usize, HashMap<String, String>)> {
+) -> config::Gradebook {
     let file = match File::open(filename) {
         Ok(file) => file,
         Err(err) => panic!("Couldn't open file {}: {}", filename, err),
@@ -15,7 +15,7 @@ pub(crate) fn parse_gradebook_file(
     let reader = BufReader::new(file);
     let mut lines = reader.lines();
 
-    let mut course_grades: HashMap<String, (usize, HashMap<String, String>)> =
+    let mut course_grades: config::Gradebook =
         HashMap::new();
 
     let first_line = lines
