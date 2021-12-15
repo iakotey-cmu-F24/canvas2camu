@@ -3,20 +3,22 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
+use std::path::Path;
 
-pub(crate) fn parse_gradebook_file(
-    filename: &str,
-) -> config::Gradebook {
-    let file = match File::open(filename) {
-        Ok(file) => file,
-        Err(err) => panic!("Couldn't open file {}: {}", filename, err),
+pub(crate) fn parse_gradebook_file(filename: &str) -> config::Gradebook {
+    let file = match Path::new(filename).extension().and_then(|s| s.to_str()) {
+        Some("csv") => match File::open(filename) {
+            Ok(file) => file,
+            Err(err) => panic!("Couldn't open file {}: {}", filename, err),
+        },
+        Some(e) => panic!("unrecognized extension: {:?}", e),
+        None => panic!("expecting a file with an extension"),
     };
 
     let reader = BufReader::new(file);
     let mut lines = reader.lines();
 
-    let mut course_grades: config::Gradebook =
-        HashMap::new();
+    let mut course_grades: config::Gradebook = HashMap::new();
 
     let first_line = lines
         .nth(0)
