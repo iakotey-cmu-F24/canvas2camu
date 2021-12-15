@@ -3,7 +3,7 @@ use crate::utils;
 use office::{DataType, Excel};
 use std::collections::HashMap;
 
-pub(crate) fn parse_enrollment(filename: &str) -> HashMap<String, String> {
+pub(crate) fn parse_enrollment(filename: &str) -> config::EnrollmentData {
     let mut workbook = Excel::open(filename).unwrap();
     let mut data = HashMap::new();
 
