@@ -1,19 +1,21 @@
+use std::path::{PathBuf};
+
 use argparse::{ArgumentParser, Store};
+use dirs::home_dir;
 
 ///Struct to hold CLI arguments
 #[derive(Debug)]
 pub(crate) struct ArgStruct {
     pub(crate) enrollment: String,
     pub(crate) gradebook: String,
-    pub(crate) output_dir: String,
+    pub(crate) output_dir: PathBuf,
 }
 impl ArgStruct {
-    
     fn new() -> ArgStruct {
         ArgStruct {
             enrollment: String::new(),
             gradebook: String::new(),
-            output_dir: String::new(),
+            output_dir: home_dir().unwrap_or(PathBuf::new()),
         }
     }
 }
