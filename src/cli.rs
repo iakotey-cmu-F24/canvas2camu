@@ -15,7 +15,7 @@ impl ArgStruct {
         ArgStruct {
             enrollment: String::new(),
             gradebook: String::new(),
-            output_dir: home_dir().unwrap_or(PathBuf::new()),
+            output_dir: PathBuf::new(),
         }
     }
 }
@@ -46,5 +46,21 @@ pub(crate) fn parse_args() -> ArgStruct {
 
         parser.parse_args_or_exit();
     }
+    {
+
+        if !args.output_dir.is_dir() {
+            match home_dir() {
+                Some(path) =>{
+                    args.output_dir = path;
+                }
+                None => {
+                    panic!("{}", "Could not set output directory");
+                }
+                
+            }
+        }
+
+    }
+    println!("{:#?}", args);
     args
 }
