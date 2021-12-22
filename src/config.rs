@@ -22,3 +22,5 @@ pub(crate) type EnrollmentData = HashMap<String, String>;
 pub(crate) type GradeMap = HashMap<String, String>;
 pub(crate) type GradebookEntry = (usize, GradeMap);
 pub(crate) type Gradebook = HashMap<String, GradebookEntry>;
+
+pub(crate) const WRITER_SHEET_NAME: &str = "Mark Upload";
