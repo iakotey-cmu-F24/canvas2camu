@@ -54,7 +54,7 @@ pub(crate) fn create_file(
                         },
                         blank!(2)
                     ])
-                    .unwrap();
+                    .expect("Unable to write to file");
             });
 
             sheet_writer.append_row(row![blank!(6)])

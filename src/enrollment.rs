@@ -4,7 +4,7 @@ use office::{DataType, Excel};
 use std::collections::HashMap;
 
 pub(crate) fn parse_enrollment(filename: &str) -> config::EnrollmentData {
-    let mut workbook = Excel::open(filename).unwrap();
+    let mut workbook = Excel::open(filename).expect(&format!("Unable to open enrollment workbook: {}", filename));
     let mut data = HashMap::new();
 
     if let Ok(range) = workbook.worksheet_range("Detailed Enrollment List") {
