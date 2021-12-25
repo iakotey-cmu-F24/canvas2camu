@@ -1,4 +1,4 @@
-use std::path::{PathBuf};
+use std::path::PathBuf;
 
 use argparse::{ArgumentParser, Store};
 use dirs::home_dir;
@@ -47,19 +47,11 @@ pub(crate) fn parse_args() -> ArgStruct {
         parser.parse_args_or_exit();
     }
     {
-
         if !args.output_dir.is_dir() {
-            match home_dir() {
-                Some(path) =>{
-                    args.output_dir = path;
-                }
-                None => {
-                    panic!("{}", "Could not set output directory");
-                }
-                
-            }
-        }
-
+            args.output_dir = home_dir().expect(
+                "Output directory could not be found: Try using -o option",
+            );
+        };
     }
     println!("{:#?}", args);
     args
