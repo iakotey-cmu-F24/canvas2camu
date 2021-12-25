@@ -1,3 +1,6 @@
 .vscode/
 /target
 Cargo.lock
+
+# Temporarily ignore test data
+tests/Assets/
