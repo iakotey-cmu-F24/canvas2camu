@@ -9,4 +9,23 @@ macro_rules! cast {
     }};
 }
 
+macro_rules! with_temp_dir{
+ // macth like arm for macro
+    ($path:expr, $code:expr)=>{
+
+        {
+            use std::env::{current_dir, set_current_dir};
+            
+            let old_path = current_dir().unwrap();
+            
+            set_current_dir($path);
+            
+            $code
+            
+            set_current_dir(old_path);
+        }
+    }
+}
+
 pub(crate) use cast;
+pub(crate) use with_temp_dir;
