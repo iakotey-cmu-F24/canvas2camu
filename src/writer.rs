@@ -1,12 +1,12 @@
 use dirs::home_dir;
 use std::path::Path;
 
-use crate::config;
+use crate::{config, utils::with_temp_dir};
 use simple_excel_writer::{blank, row, CellValue, Column, Row, Workbook};
 
 pub(crate) fn create_file(
     filename: &str, grades: &config::GradeMap,
-    enrollment: config::EnrollmentData,
+    enrollment: &config::EnrollmentData,
 ) {
     let mut workbook = Workbook::create(&format!("{}.xlsx", filename));
 
@@ -22,7 +22,6 @@ pub(crate) fn create_file(
 
     workbook
         .write_sheet(&mut sheet, |sheet_writer| {
-
             sheet_writer.append_row(row![
                 "StuRollNo",
                 "Mark",
@@ -49,8 +48,8 @@ pub(crate) fn create_file(
                             _ => &**grade,
                         },
                         match &**grade {
-                            "EX" | "N/A" | "" => "N",
-                            _ => "Y",
+                            "EX" | "N/A" | "" => "Y",
+                            _ => "N",
                         },
                         blank!(2)
                     ])
@@ -62,4 +61,15 @@ pub(crate) fn create_file(
         .expect("Unable to write to file");
 
     workbook.close().expect("close excel error!");
+}
+
+pub(crate) fn create_files(
+    output_dir: &str, gradebook: &config::Gradebook,
+    enrollment: &config::EnrollmentData,
+) {
+    with_temp_dir!(output_dir, {
+        gradebook.keys().for_each(|grade| {
+            create_file(grade, &gradebook[grade].1, enrollment)
+        });
+    })
 }
