@@ -39,18 +39,21 @@ pub(crate) fn create_file(
                 "Result Status"
             ])?;
 
-            grades.iter().for_each(|(email, grade)| {
+            enrollment.iter().for_each(|(email, name, student_id)| {
+
+                let current_grade = grades[email].as_str();
+                let (current_grade, current_status) =
+                    match grades[email].as_str() {
+                        "EX" | "N/A" | "" => ("0.00", "Y"),
+                        _ => (current_grade, "N"),
+                    };
+                
                 sheet_writer
                     .append_row(row![
-                        &*enrollment[email],
-                        match &**grade {
-                            "EX" | "N/A" | "" => "0.00",
-                            _ => &**grade,
-                        },
-                        match &**grade {
-                            "EX" | "N/A" | "" => "Y",
-                            _ => "N",
-                        },
+                        student_id.as_str(),
+                        current_grade,
+                        current_status,
+                        name.as_str(),
                         blank!(2)
                     ])
                     .expect("Unable to write to file");
