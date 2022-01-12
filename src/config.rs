@@ -17,7 +17,7 @@ pub(crate) const GRADEBOOK_CSV_DELIMITER: char = ',';
 
 pub(crate) const GRADEBOOK_EMAIL_COL_INDEX: usize = 3;
 
-pub(crate) type EnrollmentData = HashMap<String, String>;
+pub(crate) type EnrollmentData = Vec<(String, String, String)>;
 
 pub(crate) type GradeMap = HashMap<String, String>;
 pub(crate) type GradebookEntry = (usize, GradeMap);
