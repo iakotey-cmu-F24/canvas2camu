@@ -67,10 +67,12 @@ fn create_file(
 pub(crate) fn create_files(
     output_dir: &str, gradebook: &config::Gradebook,
     enrollment: &config::EnrollmentData,
-) {
+) -> Result<(), Error> {
     with_temp_dir!(output_dir, {
-        gradebook.keys().for_each(|grade| {
-            create_file(grade, &gradebook[grade].1, enrollment)
+        for grade in gradebook.keys() {
+            create_file(grade, &gradebook[grade].1, enrollment)?;
+        }
         });
-    })
+
+    Ok(())
 }
