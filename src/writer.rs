@@ -1,5 +1,5 @@
 use dirs::home_dir;
-use std::path::Path;
+use std::{io::Error, path::Path};
 
 use crate::{config, utils::with_temp_dir};
 use simple_excel_writer::{blank, row, CellValue, Column, Row, Workbook};
@@ -7,7 +7,7 @@ use simple_excel_writer::{blank, row, CellValue, Column, Row, Workbook};
 fn create_file(
     filename: &str, grades: &config::GradeMap,
     enrollment: &config::EnrollmentData,
-) {
+) -> Result<(), Error> {
     let mut workbook = Workbook::create(&format!("{}.xlsx", filename));
 
     let mut sheet = workbook.create_sheet(config::WRITER_SHEET_NAME);
@@ -20,8 +20,7 @@ fn create_file(
     sheet.add_column(Column { width: 15.0 });
     sheet.add_column(Column { width: 15.0 });
 
-    workbook
-        .write_sheet(&mut sheet, |sheet_writer| {
+    workbook.write_sheet(&mut sheet, |sheet_writer| {
             sheet_writer.append_row(row![
                 "StuRollNo",
                 "Mark",
@@ -37,33 +36,32 @@ fn create_file(
                 "Student Name",
                 "InEligible",
                 "Result Status"
-            ])?;
+        ])
+    })?;
 
-            enrollment.iter().for_each(|(email, name, student_id)| {
-
+    for (email, name, student_id) in enrollment.iter() {
                 let current_grade = grades[email].as_str();
-                let (current_grade, current_status) =
-                    match grades[email].as_str() {
+        let (current_grade, current_status) = match grades[email].as_str() {
                         "EX" | "N/A" | "" => ("0.00", "Y"),
                         _ => (current_grade, "N"),
                     };
                 
-                sheet_writer
-                    .append_row(row![
+        workbook.write_sheet(&mut sheet, |sheet_writer| {
+            sheet_writer.append_row(row![
                         student_id.as_str(),
                         current_grade,
                         current_status,
                         name.as_str(),
                         blank!(2)
                     ])
-                    .expect("Unable to write to file");
-            });
+        })?;
+    }
 
+    workbook.write_sheet(&mut sheet, |sheet_writer| {
             sheet_writer.append_row(row![blank!(6)])
-        })
-        .expect("Unable to write to file");
+    })?;
 
-    workbook.close().expect("close excel error!");
+    workbook.close().map(|_result| ())
 }
 
 pub(crate) fn create_files(
