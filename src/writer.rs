@@ -4,7 +4,7 @@ use std::path::Path;
 use crate::{config, utils::with_temp_dir};
 use simple_excel_writer::{blank, row, CellValue, Column, Row, Workbook};
 
-pub(crate) fn create_file(
+fn create_file(
     filename: &str, grades: &config::GradeMap,
     enrollment: &config::EnrollmentData,
 ) {
