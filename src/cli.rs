@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use argparse::{ArgumentParser, Store, StoreTrue};
+use argparse::{ArgumentParser, Print, Store, StoreTrue};
 use dirs::home_dir;
 
 ///Struct to hold CLI arguments
@@ -50,6 +50,11 @@ pub(crate) fn parse_args() -> ArgStruct {
             &["-z", "--zip"],
             StoreTrue,
             "Save as zip",
+        );
+        parser.add_option(
+            &["-v", "--version"],
+            Print(env!("CARGO_PKG_VERSION").to_string()),
+            "Show version",
         );
 
         parser.parse_args_or_exit();
