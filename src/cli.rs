@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use argparse::{ArgumentParser, Store};
+use argparse::{ArgumentParser, Store, StoreTrue};
 use dirs::home_dir;
 
 ///Struct to hold CLI arguments
@@ -9,13 +9,16 @@ pub(crate) struct ArgStruct {
     pub(crate) enrollment: String,
     pub(crate) gradebook: String,
     pub(crate) output_dir: PathBuf,
+    pub(crate) as_zip: bool,
 }
+
 impl ArgStruct {
     fn new() -> ArgStruct {
         ArgStruct {
             enrollment: String::new(),
             gradebook: String::new(),
             output_dir: PathBuf::new(),
+            as_zip: false,
         }
     }
 }
@@ -42,6 +45,11 @@ pub(crate) fn parse_args() -> ArgStruct {
             &["-o", "--output"],
             Store,
             "Output directory",
+        );
+        parser.refer(&mut args.as_zip).add_option(
+            &["-z", "--zip"],
+            StoreTrue,
+            "Save as zip",
         );
 
         parser.parse_args_or_exit();
