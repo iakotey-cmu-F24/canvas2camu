@@ -7,7 +7,8 @@ pub(crate) fn parse_enrollment(filename: &str) -> config::EnrollmentData {
         .expect(&format!("Unable to open enrollment workbook: {}", filename));
 
     workbook
-        .worksheet_range(config::ENROLLMENT_SHEET_NAME).unwrap()
+        .worksheet_range(config::ENROLLMENT_SHEET_NAME)
+        .expect("File is not a valid Canvas Gradebook file")
         .rows()
         .skip(config::ENROLLMENT_HEADER_ROW)
         .map(|row| {
@@ -25,6 +26,6 @@ pub(crate) fn parse_enrollment(filename: &str) -> config::EnrollmentData {
                     DataType::String
                 ),
             )
-        }).collect::<config::EnrollmentData>()
-
+        })
+        .collect::<config::EnrollmentData>()
 }
