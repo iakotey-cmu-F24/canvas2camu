@@ -1,4 +1,4 @@
-/// https://stackoverflow.com/a/69324393
+/// <https://stackoverflow.com/a/69324393>
 macro_rules! cast {
     ($target: expr, $pat: path) => {{
         if let $pat(a) = $target {
@@ -8,9 +8,12 @@ macro_rules! cast {
         }
     }};
 }
-
+/// Macro to execute code in a different directory.
+/// 
+/// Saves old directory, switches to new directory, 
+/// runs expression in the new directory and then restores the old one.
 macro_rules! with_temp_dir{
- // macth like arm for macro
+    // match like arm for macro
     ($path:expr, $code:expr)=>{
 
         {
