@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use argparse::{ArgumentParser, Print, Store, StoreTrue};
 use dirs::home_dir;
 
-///Struct to hold CLI arguments
+/// Struct to hold CLI arguments
 #[derive(Debug)]
 pub(crate) struct ArgStruct {
     pub(crate) enrollment: String,
@@ -23,6 +23,7 @@ impl ArgStruct {
     }
 }
 
+/// Parse user-provided arguments
 pub(crate) fn parse_args() -> ArgStruct {
     let mut args = ArgStruct::new();
 
@@ -66,6 +67,5 @@ pub(crate) fn parse_args() -> ArgStruct {
             );
         };
     }
-    println!("{:#?}", args);
     args
 }
