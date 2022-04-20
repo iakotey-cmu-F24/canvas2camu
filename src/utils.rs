@@ -16,7 +16,7 @@ macro_rules! with_temp_dir{
         {
             use std::env::{current_dir, set_current_dir};
             
-            let old_path = current_dir().unwrap();
+            let old_path = current_dir().expect("An error occurred: Unable to get the current directory");
             
             set_current_dir($path).expect(&format!("Failed to set current directory to {}", $path));
             
