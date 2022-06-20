@@ -37,29 +37,28 @@ fn create_file(
             "Student Name",
             "InEligible",
             "Result Status"
-        ])
-    })?;
+        ])?;
 
-    for (email, name, student_id) in enrollment.iter() {
-        let current_grade = grades[email].as_str();
-        let (current_grade, current_status) = match grades[email].as_str() {
-            "EX" | "N/A" | "" => ("0.00", "Y"),
-            _ => (current_grade, "N"),
-        };
+        for (email, name, student_id) in enrollment.iter() {
+            let current_grade = grades[email].as_str();
+            let (current_grade, current_status) = match grades[email].as_str() {
+                "EX" => ("0.00", "Y"),
+                "N/A" | "" => ("0.00", "N"),
+                _ => (current_grade, "N"),
+            };
 
-        workbook.write_sheet(&mut sheet, |sheet_writer| {
             sheet_writer.append_row(row![
                 student_id.as_str(),
                 current_grade,
                 current_status,
                 name.as_str(),
                 blank!(2)
-            ])
-        })?;
-    }
+            ])?;
+        }
 
-    workbook.write_sheet(&mut sheet, |sheet_writer| {
-        sheet_writer.append_row(row![blank!(6)])
+        sheet_writer.append_row(row![blank!(6)])?;
+
+        Ok(())
     })?;
 
     workbook.close().map(|_result| ())
