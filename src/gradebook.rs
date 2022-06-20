@@ -25,16 +25,32 @@ pub(crate) fn parse_gradebook_file(filename: &str) -> config::Gradebook {
         .ok_or(())
         .expect("")
         .expect("Could not read from Gradebook");
-    let third_line = lines
-        .nth(1)
-        .ok_or(())
-        .expect("")
-        .expect("Could not read from Gradebook");
+
+    // let points_line = lines
+    //     .nth(0)
+    //     .ok_or(())
+    //     .expect("")
+    //     .expect("Could not read from Gradebook");
+    let points_line = loop {
+
+        match lines.next().expect("Could not read from Gradebook") {
+            Ok(line) => {
+                if line.contains("Points Possible") {
+                    break line;
+                } else {
+                    continue;
+                }
+            },
+            Err(err) => {
+                panic!("{}", err);
+            }
+        }
+    };
 
     let tokens = first_line
         .trim()
         .split(",")
-        .zip(third_line.trim().split(",")) // add the line that contains marks
+        .zip(points_line.trim().split(",")) // add the line that contains marks
         .enumerate() // tag on a counter
         .map(|(index, (title, grade_possible))| {
             (index + 1, title, grade_possible) // Add 1 to index to account for enumerate starting from 0
