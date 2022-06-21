@@ -17,7 +17,7 @@ pub(crate) const ENROLLMENT_STUD_NAME_COL_INDEX: usize = 2;
 pub(crate) const ENROLLMENT_EMAIL_COL_INDEX: usize = 19;
 
 
-pub(crate) const GRADEBOOK_NON_GRADE_COL_COUNT: usize = 4;
+pub(crate) const GRADEBOOK_NON_GRADE_COL_COUNT: usize = 5;
 
 pub(crate) const GRADEBOOK_CSV_DELIMITER: char = ',';
 
