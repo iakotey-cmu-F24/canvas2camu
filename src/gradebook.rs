@@ -15,70 +15,42 @@ pub(crate) fn parse_gradebook_file(filename: &str) -> config::Gradebook {
         None => panic!("expecting a file with an extension"),
     };
 
-    let reader = BufReader::new(file);
-    let mut lines = reader.lines();
-
     let mut course_grades: config::Gradebook = HashMap::new();
 
-    let first_line = lines
-        .nth(0)
-        .ok_or(())
-        .expect("")
-        .expect("Could not read from Gradebook");
+    let mut rdr =
+        csv::ReaderBuilder::new().has_headers(false).from_reader(file);
+    let mut records = rdr.records();
 
-    // let points_line = lines
-    //     .nth(0)
-    //     .ok_or(())
-    //     .expect("")
-    //     .expect("Could not read from Gradebook");
-    let points_line = loop {
+    let headers = records.next().unwrap().unwrap();
+    let points_row = records.nth(1).unwrap().unwrap();
 
-        match lines.next().expect("Could not read from Gradebook") {
-            Ok(line) => {
-                if line.contains("Points Possible") {
-                    break line;
-                } else {
-                    continue;
-                }
-            },
-            Err(err) => {
-                panic!("{}", err);
-            }
-        }
-    };
-
-    let tokens = first_line
-        .trim()
-        .split(",")
-        .zip(points_line.trim().split(",")) // add the line that contains marks
-        .enumerate() // tag on a counter
-        .map(|(index, (title, grade_possible))| {
-            (index + 1, title, grade_possible) // Add 1 to index to account for enumerate starting from 0
-        })
-        .skip(config::GRADEBOOK_NON_GRADE_COL_COUNT) // Skip the nun-grade cols
-        .filter(|(_, _, grade_possible)| {
-            // use the marks line to separate grades from grade statistics
-            !grade_possible.is_empty()
-                && !grade_possible.eq_ignore_ascii_case("(read only)")
+    let tokens = headers
+        .iter()
+        .zip(points_row.iter())
+        .enumerate()
+        .skip(config::GRADEBOOK_NON_GRADE_COL_COUNT)
+        .map(|(idx, (course, points))| (idx, course.trim(), points))
+        .filter(|(idx, course, points)| {
+            !points.eq_ignore_ascii_case("(read only)")
         });
 
     tokens.for_each(|(index, title, _)| {
         course_grades.insert(title.trim().to_string(), (index, HashMap::new()));
     });
 
-    lines.for_each(|record| match record {
+    records.for_each(|record| match record {
         Err(why) => panic!("{}", why),
         Ok(line) => {
-            let chunks: Vec<&str> =
-                line.split(config::GRADEBOOK_CSV_DELIMITER).collect();
-
             course_grades.iter_mut().for_each(|(_, (index, map))| {
                 map.insert(
-                    chunks[config::GRADEBOOK_EMAIL_COL_INDEX].to_string(),
-                    chunks[*index].to_string(),
+                    line.get(config::GRADEBOOK_EMAIL_COL_INDEX)
+                        .unwrap()
+                        .trim()
+                        .to_string(),
+                    line.get(*index).unwrap().trim().to_string(),
                 );
             });
-        }
+        },
     });
 
     course_grades
