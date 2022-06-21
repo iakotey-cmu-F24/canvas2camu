@@ -8,7 +8,7 @@ fn create_file(
     filename: &str, grades: &config::GradeMap,
     enrollment: &config::EnrollmentData,
 ) -> Result<(), Error> {
-    let mut workbook = Workbook::create(&format!("{}.xlsx", filename));
+    let mut workbook = Workbook::create(&(format!("{}.xlsx", filename).replace(":", "-")));
 
     let mut sheet = workbook.create_sheet(config::WRITER_SHEET_NAME);
 
@@ -40,9 +40,12 @@ fn create_file(
         ])?;
 
         for (email, name, student_id) in enrollment.iter() {
+            if !grades.contains_key(email) {
+                println!("\n\tKey {} not found!\n", email);
+            }
             let current_grade = grades[email].as_str();
             let (current_grade, current_status) = match grades[email].as_str() {
-                "EX" => ("0.00", "Y"),
+                "EX" => ("", "Y"),
                 "N/A" | "" => ("0.00", "N"),
                 _ => (current_grade, "N"),
             };
