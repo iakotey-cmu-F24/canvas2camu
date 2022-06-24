@@ -8,7 +8,13 @@ pub(crate) fn parse_enrollment(filename: &str) -> config::EnrollmentData {
 
     workbook
         .worksheet_range(config::ENROLLMENT_SHEET_NAME)
-        .expect("File is not a valid Canvas Gradebook file")
+        .expect(
+            format!(
+                "Ensure the workbook has the appropriate sheet named '{}'",
+                config::ENROLLMENT_SHEET_NAME
+            )
+            .as_str(),
+        )
         .rows()
         .skip(config::ENROLLMENT_HEADER_ROW)
         .map(|row| {
