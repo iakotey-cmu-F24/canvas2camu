@@ -15,8 +15,6 @@ pub(crate) fn parse_gradebook_file(filename: &str) -> config::Gradebook {
         None => panic!("expecting a file with an extension"),
     };
 
-    let mut course_grades: config::Gradebook = HashMap::new();
-
     let mut rdr =
         csv::ReaderBuilder::new().has_headers(false).from_reader(file);
     let mut records = rdr.records();
@@ -33,6 +31,8 @@ pub(crate) fn parse_gradebook_file(filename: &str) -> config::Gradebook {
         .filter(|(idx, course, points)| {
             !points.eq_ignore_ascii_case("(read only)")
         });
+
+    let mut course_grades: config::Gradebook = HashMap::new();
 
     tokens.for_each(|(index, title, _)| {
         course_grades.insert(title.trim().to_string(), (index, HashMap::new()));
