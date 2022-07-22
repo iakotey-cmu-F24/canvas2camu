@@ -5,15 +5,32 @@ use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::Path;
 
-pub(crate) fn parse_gradebook_file(filename: &str) -> config::Gradebook {
-    let file = match Path::new(filename).extension().and_then(|s| s.to_str()) {
-        Some("csv") => match File::open(filename) {
-            Ok(file) => file,
-            Err(err) => panic!("Couldn't open file {}: {}", filename, err),
-        },
-        Some(e) => panic!("unrecognized extension: {:?}", e),
-        None => panic!("expecting a file with an extension"),
-    };
+use snafu::prelude::*;
+
+#[derive(Debug, Snafu)]
+pub enum GradebookError {
+    #[snafu(display("Unable to open file: {path}"))]
+    FileOpenError { source: io::Error, path: String },
+
+    #[snafu(display("Unable to read next line"))]
+    FileEmptyError,
+
+    #[snafu(display("Unable to parse header row"))]
+    HeaderParseError { source: csv::Error },
+
+    #[snafu(display("Unable to parse entry #{index}"))]
+    EntryParseError { index: usize, source: csv::Error },
+
+    #[snafu(display("Required header 'SIS Login ID' in gradebook"))]
+    EmailHeaderNotFoundError,
+
+    #[snafu(display("No Points entry found"))]
+    NoPointsError,
+
+    #[doc(hidden)]
+    __Nonexhaustive,
+}
+
 
     let mut rdr =
         csv::ReaderBuilder::new().has_headers(false).from_reader(file);
