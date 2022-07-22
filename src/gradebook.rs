@@ -31,6 +31,9 @@ pub enum GradebookError {
     __Nonexhaustive,
 }
 
+pub(crate) fn parse_gradebook_file(
+    filename: &str,
+) -> Result<config::Gradebook, GradebookError> {
 
     let mut rdr =
         csv::ReaderBuilder::new().has_headers(false).from_reader(file);
