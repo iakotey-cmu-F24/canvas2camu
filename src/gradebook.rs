@@ -48,9 +48,11 @@ pub(crate) fn parse_gradebook_file(
         .enumerate()
         .skip(config::GRADEBOOK_NON_GRADE_COL_COUNT)
         .map(|(idx, (course, points))| (idx, course.trim(), points))
-        .filter(|(idx, course, points)| {
-            !points.eq_ignore_ascii_case("(read only)")
-        });
+        .filter(|(_, _, points)| {
+            !points.eq_ignore_ascii_case("Points Possible")
+        })
+        .filter(|(_, _, points)| !points.trim().is_empty())
+        .filter(|(_, _, points)| !points.eq_ignore_ascii_case("(read only)"));
 
     let mut course_grades: config::Gradebook = HashMap::new();
 
