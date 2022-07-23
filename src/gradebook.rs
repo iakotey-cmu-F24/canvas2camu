@@ -42,7 +42,19 @@ pub(crate) fn parse_gradebook_file(
     let mut headers =
         records.next().context(FileEmptySnafu)?.context(HeaderParseSnafu)?;
 
+
+    let mut points_row = loop {
+        let record =
+            records.next().context(NoPointsSnafu)?.context(HeaderParseSnafu)?;
+        if let Some(pat) = record.get(0) {
+            if pat.trim().eq_ignore_ascii_case("Points Possible") {
+                break record;
+            }
+        }
+    };
+
     headers.trim();
+    points_row.trim();
 
     let tokens = headers
         .iter()
