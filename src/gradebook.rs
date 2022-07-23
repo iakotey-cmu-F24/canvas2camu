@@ -34,6 +34,8 @@ pub enum GradebookError {
 pub(crate) fn parse_gradebook_file(
     filename: &str,
 ) -> Result<config::Gradebook, GradebookError> {
+    let file = File::open(filename)
+        .context(FileOpenSnafu { path: filename.to_string() })?;
 
     let mut rdr =
         csv::ReaderBuilder::new().has_headers(false).from_reader(file);
@@ -89,5 +91,5 @@ pub(crate) fn parse_gradebook_file(
         },
     });
 
-    course_grades
+    Ok(course_grades)
 }
