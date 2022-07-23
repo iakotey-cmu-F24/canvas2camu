@@ -39,8 +39,10 @@ pub(crate) fn parse_gradebook_file(
         csv::ReaderBuilder::new().has_headers(false).from_reader(file);
     let mut records = rdr.records();
 
-    let headers = records.next().unwrap().unwrap();
-    let points_row = records.nth(1).unwrap().unwrap();
+    let mut headers =
+        records.next().context(FileEmptySnafu)?.context(HeaderParseSnafu)?;
+
+    headers.trim();
 
     let tokens = headers
         .iter()
