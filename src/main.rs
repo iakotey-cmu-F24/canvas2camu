@@ -16,7 +16,7 @@ use writer::create_files;
 fn main() {
     let args = parse_args();
     let enrollment_data = parse_enrollment(&args.enrollment);
-    let gradebook = parse_gradebook_file(&args.gradebook);
+    let gradebook = parse_gradebook_file(&args.gradebook).unwrap();
     // println!("{:#?}", enrollment_data);
     // println!("{:#?}", gradebook);
     // println!("{:#?}", args);
