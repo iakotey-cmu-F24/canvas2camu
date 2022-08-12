@@ -1,10 +1,25 @@
 use crate::config;
 use crate::utils;
 use office::{DataType, Excel};
+use std::io;
 
-pub(crate) fn parse_enrollment(filename: &str) -> config::EnrollmentData {
-    let mut workbook = Excel::open(filename)
-        .expect(&format!("Unable to open enrollment workbook: {}", filename));
+use snafu::prelude::*;
+
+#[derive(Debug, Snafu)]
+pub enum EnrollmentError {
+    #[snafu(display("Unable to open enrollment workbook: {filename}"))]
+    FileOpenError { source: office::Error, filename: String },
+
+    #[snafu(display("Unable to read next line"))]
+    FileEmptyError,
+
+    #[snafu(display("Sheet '{sheet}' not found in workbook"))]
+    SheetNotFoundError { sheet: String, source: office::Error },
+
+    #[doc(hidden)]
+    __Nonexhaustive,
+}
+
 
     workbook
         .worksheet_range(config::ENROLLMENT_SHEET_NAME)
