@@ -20,16 +20,17 @@ pub enum EnrollmentError {
     __Nonexhaustive,
 }
 
+pub(crate) fn parse_enrollment(
+    filename: &str,
+) -> Result<config::EnrollmentData, EnrollmentError> {
+    let mut workbook =
+        Excel::open(filename).context(FileOpenSnafu { filename })?;
 
-    workbook
+    Ok(workbook
         .worksheet_range(config::ENROLLMENT_SHEET_NAME)
-        .expect(
-            format!(
-                "Ensure the workbook has the appropriate sheet named '{}'",
-                config::ENROLLMENT_SHEET_NAME
-            )
-            .as_str(),
-        )
+        .context(SheetNotFoundSnafu {
+            sheet: config::ENROLLMENT_SHEET_NAME.to_string(),
+        })?
         .rows()
         .skip(config::ENROLLMENT_HEADER_ROW)
         .map(|row| {
@@ -48,5 +49,5 @@ pub enum EnrollmentError {
                 ),
             )
         })
-        .collect::<config::EnrollmentData>()
+        .collect::<config::EnrollmentData>())
 }
