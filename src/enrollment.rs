@@ -44,7 +44,7 @@ pub(crate) fn parse_enrollment(
                 Ok((
                     extract_cell_value!(
                         row[config::ENROLLMENT_EMAIL_COL_INDEX],
-                    DataType::String
+                        DataType::String
                     )
                     .context(CellTypeMismatchSnafu {
                         col: config::ENROLLMENT_EMAIL_COL_INDEX + 1,
@@ -53,7 +53,7 @@ pub(crate) fn parse_enrollment(
                     })?,
                     extract_cell_value!(
                         row[config::ENROLLMENT_EMAIL_COL_INDEX],
-                    DataType::String
+                        DataType::String
                     )
                     .context(CellTypeMismatchSnafu {
                         col: config::ENROLLMENT_EMAIL_COL_INDEX + 1,
@@ -62,7 +62,7 @@ pub(crate) fn parse_enrollment(
                     })?,
                     extract_cell_value!(
                         row[config::ENROLLMENT_STUD_NAME_COL_INDEX],
-                    DataType::String
+                        DataType::String
                     )
                     .context(CellTypeMismatchSnafu {
                         col: config::ENROLLMENT_STUD_ID_COL_INDEX + 1,
@@ -83,7 +83,7 @@ pub(crate) fn parse_enrollment(
                     // ),
                 ))
             },
-            )
+        )
         .flatten()
         .collect::<config::EnrollmentData>())
 }
