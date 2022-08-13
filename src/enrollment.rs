@@ -37,22 +37,65 @@ pub(crate) fn parse_enrollment(
             sheet: config::ENROLLMENT_SHEET_NAME.to_string(),
         })?
         .rows()
+        .enumerate()
         .skip(config::ENROLLMENT_HEADER_ROW)
-        .map(|row| {
-            (
-                utils::cast!(
-                    row[config::ENROLLMENT_EMAIL_COL_INDEX].to_owned(),
+        .map(
+            |(idx, row)| -> Result<(String, String, String), EnrollmentError> {
+                Ok((
+                    extract_cell_value!(
+                        row[config::ENROLLMENT_EMAIL_COL_INDEX],
                     DataType::String
-                ),
-                utils::cast!(
-                    row[config::ENROLLMENT_STUD_NAME_COL_INDEX].to_owned(),
+                    )
+                    .context(CellTypeMismatchSnafu {
+                        col: config::ENROLLMENT_EMAIL_COL_INDEX + 1,
+                        row: idx + 1,
+                        expected_type: "String".to_string(),
+                    })?,
+                    extract_cell_value!(
+                        row[config::ENROLLMENT_EMAIL_COL_INDEX],
                     DataType::String
-                ),
-                utils::cast!(
-                    row[config::ENROLLMENT_STUD_ID_COL_INDEX].to_owned(),
+                    )
+                    .context(CellTypeMismatchSnafu {
+                        col: config::ENROLLMENT_EMAIL_COL_INDEX + 1,
+                        row: idx + 1,
+                        expected_type: "String".to_string(),
+                    })?,
+                    extract_cell_value!(
+                        row[config::ENROLLMENT_STUD_NAME_COL_INDEX],
                     DataType::String
-                ),
+                    )
+                    .context(CellTypeMismatchSnafu {
+                        col: config::ENROLLMENT_STUD_ID_COL_INDEX + 1,
+                        row: idx + 1,
+                        expected_type: "String".to_string(),
+                    })?,
+                    // utils::cast!(
+                    //     row[config::ENROLLMENT_EMAIL_COL_INDEX].to_owned(),
+                    //     DataType::String
+                    // ),
+                    // utils::cast!(
+                    //     row[config::ENROLLMENT_STUD_NAME_COL_INDEX].to_owned(),
+                    //     DataType::String
+                    // ),
+                    // utils::cast!(
+                    //     row[config::ENROLLMENT_STUD_ID_COL_INDEX].to_owned(),
+                    //     DataType::String
+                    // ),
+                ))
+            },
             )
-        })
+        .flatten()
         .collect::<config::EnrollmentData>())
 }
+
+macro_rules! extract_cell_value {
+    ($expression: expr, $target_type: path) => {
+        if let $target_type(a) = $expression {
+            Some(a)
+        } else {
+            None
+            // panic!("mismatch variant when cast to {}", stringify!($pat)); // #2
+        }
+    };
+}
+use extract_cell_value;
