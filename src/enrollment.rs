@@ -16,6 +16,11 @@ pub enum EnrollmentError {
     #[snafu(display("Sheet '{sheet}' not found in workbook"))]
     SheetNotFoundError { sheet: String, source: office::Error },
 
+    #[snafu(display(
+        "Expected cell type {expected_type} at cell ({col}, {row})"
+    ))]
+    CellTypeMismatchError { row: usize, col: usize, expected_type: String },
+
     #[doc(hidden)]
     __Nonexhaustive,
 }
