@@ -1,7 +1,5 @@
 use crate::config;
-use crate::utils;
 use office::{DataType, Excel};
-use std::io;
 
 use snafu::prelude::*;
 
@@ -19,7 +17,7 @@ pub enum EnrollmentError {
     #[snafu(display(
         "Expected cell type {expected_type} at cell ({col}, {row})"
     ))]
-    CellTypeMismatchError { row: usize, col: usize, expected_type: String },
+    CellTypeMismatchError { row: usize, col: usize, expected_type: &'static str },
 
     #[doc(hidden)]
     __Nonexhaustive,
@@ -43,44 +41,32 @@ pub(crate) fn parse_enrollment(
             |(idx, row)| -> Result<(String, String, String), EnrollmentError> {
                 Ok((
                     extract_cell_value!(
-                        row[config::ENROLLMENT_EMAIL_COL_INDEX],
+                        &row[config::ENROLLMENT_EMAIL_COL_INDEX],
                         DataType::String
                     )
                     .context(CellTypeMismatchSnafu {
                         col: config::ENROLLMENT_EMAIL_COL_INDEX + 1,
                         row: idx + 1,
-                        expected_type: "String".to_string(),
-                    })?,
+                        expected_type: "String",
+                    })?.to_string(),
                     extract_cell_value!(
-                        row[config::ENROLLMENT_EMAIL_COL_INDEX],
+                        &row[config::ENROLLMENT_EMAIL_COL_INDEX],
                         DataType::String
                     )
                     .context(CellTypeMismatchSnafu {
                         col: config::ENROLLMENT_EMAIL_COL_INDEX + 1,
                         row: idx + 1,
-                        expected_type: "String".to_string(),
-                    })?,
+                        expected_type: "String",
+                    })?.to_string(),
                     extract_cell_value!(
-                        row[config::ENROLLMENT_STUD_NAME_COL_INDEX],
+                        &row[config::ENROLLMENT_STUD_NAME_COL_INDEX],
                         DataType::String
                     )
                     .context(CellTypeMismatchSnafu {
                         col: config::ENROLLMENT_STUD_ID_COL_INDEX + 1,
                         row: idx + 1,
-                        expected_type: "String".to_string(),
-                    })?,
-                    // utils::cast!(
-                    //     row[config::ENROLLMENT_EMAIL_COL_INDEX].to_owned(),
-                    //     DataType::String
-                    // ),
-                    // utils::cast!(
-                    //     row[config::ENROLLMENT_STUD_NAME_COL_INDEX].to_owned(),
-                    //     DataType::String
-                    // ),
-                    // utils::cast!(
-                    //     row[config::ENROLLMENT_STUD_ID_COL_INDEX].to_owned(),
-                    //     DataType::String
-                    // ),
+                        expected_type: "String",
+                    })?.to_string(),
                 ))
             },
         )
@@ -94,7 +80,6 @@ macro_rules! extract_cell_value {
             Some(a)
         } else {
             None
-            // panic!("mismatch variant when cast to {}", stringify!($pat)); // #2
         }
     };
 }
