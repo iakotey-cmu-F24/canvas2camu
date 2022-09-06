@@ -1,5 +1,5 @@
 [package]
-name = "grade_gen"
+name = "canvas2camu"
 version = "0.1.0"
 edition = "2021"
 authors = ["Ian Akotey"]
