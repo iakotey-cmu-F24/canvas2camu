@@ -1,4 +1,4 @@
-use crate::config;
+use crate::config::{self, EnrollmentItem};
 use office::{DataType, Excel};
 
 use snafu::prelude::*;
@@ -38,7 +38,7 @@ pub(crate) fn parse_enrollment(
         .enumerate()
         .skip(config::ENROLLMENT_HEADER_ROW)
         .map(
-            |(idx, row)| -> Result<(String, String, String), EnrollmentError> {
+            |(idx, row)| -> Result<EnrollmentItem, EnrollmentError> {
                 Ok((
                     extract_cell_value!(
                         &row[config::ENROLLMENT_EMAIL_COL_INDEX],
