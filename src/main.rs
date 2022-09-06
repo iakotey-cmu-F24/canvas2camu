@@ -14,8 +14,9 @@ use enrollment::parse_enrollment;
 use gradebook::parse_gradebook_file;
 use writer::create_files;
 fn main() {
-    let args = parse_args();
 
+    let args = parse_args();
+    
     let enrollment_data = parse_enrollment(&args.enrollment).unwrap();
     let gradebook = parse_gradebook_file(&args.gradebook);
 
