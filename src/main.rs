@@ -18,7 +18,7 @@ fn main() {
     let args = parse_args();
     
     let enrollment_data = parse_enrollment(&args.enrollment).unwrap();
-    let gradebook = parse_gradebook_file(&args.gradebook);
+    let gradebook = parse_gradebook_file(&args.gradebook).unwrap();
 
     create_files(&args.output_dir.to_str().unwrap(), &gradebook, &enrollment_data);
 }

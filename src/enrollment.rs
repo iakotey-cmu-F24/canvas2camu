@@ -50,16 +50,16 @@ pub(crate) fn parse_enrollment(
                         expected_type: "String",
                     })?.to_string(),
                     extract_cell_value!(
-                        &row[config::ENROLLMENT_EMAIL_COL_INDEX],
+                        &row[config::ENROLLMENT_STUD_NAME_COL_INDEX],
                         DataType::String
                     )
                     .context(CellTypeMismatchSnafu {
-                        col: config::ENROLLMENT_EMAIL_COL_INDEX + 1,
+                        col: config::ENROLLMENT_STUD_NAME_COL_INDEX + 1,
                         row: idx + 1,
                         expected_type: "String",
                     })?.to_string(),
                     extract_cell_value!(
-                        &row[config::ENROLLMENT_STUD_NAME_COL_INDEX],
+                        &row[config::ENROLLMENT_STUD_ID_COL_INDEX],
                         DataType::String
                     )
                     .context(CellTypeMismatchSnafu {
