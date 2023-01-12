@@ -1,6 +1,7 @@
 //! `Canvas2Camu` is a rust program to generate CAMU bulk-upload-compatible
 //! excel files from Canvas' gradebook.
 
+#![feature(iter_advance_by)]
 
 
 mod cli;
