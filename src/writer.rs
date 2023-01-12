@@ -1,27 +1,34 @@
-use dirs::home_dir;
-use std::{io::Error, path::Path};
+use std::io::Error;
 
-use crate::{config, utils::with_temp_dir};
 use simple_excel_writer::{blank, row, CellValue, Column, Row, Workbook};
 
+use crate::config;
+use crate::utils::with_temp_dir;
+
 fn create_file(
-    filename: &str, grades: &config::GradeMap,
-    enrollment: &config::EnrollmentData,
+    filename : &str, grades : &config::GradeMap, enrollment : &config::EnrollmentData
 ) -> Result<(), Error> {
+
     let mut workbook = Workbook::create(&(format!("{}.xlsx", filename).replace(":", "-")));
 
     let mut sheet = workbook.create_sheet(config::WRITER_SHEET_NAME);
 
     // set column width
-    sheet.add_column(Column { width: 15.0 });
-    sheet.add_column(Column { width: 15.0 });
-    sheet.add_column(Column { width: 15.0 });
-    sheet.add_column(Column { width: 30.0 });
-    sheet.add_column(Column { width: 15.0 });
-    sheet.add_column(Column { width: 15.0 });
+    sheet.add_column(Column { width : 15.0 });
+
+    sheet.add_column(Column { width : 15.0 });
+
+    sheet.add_column(Column { width : 15.0 });
+
+    sheet.add_column(Column { width : 30.0 });
+
+    sheet.add_column(Column { width : 15.0 });
+
+    sheet.add_column(Column { width : 15.0 });
 
     // Write header rows to file
     workbook.write_sheet(&mut sheet, |sheet_writer| {
+
         sheet_writer.append_row(row![
             "StuRollNo",
             "Mark",
@@ -30,6 +37,7 @@ fn create_file(
             "InEligible",
             "rsSts"
         ])?;
+
         sheet_writer.append_row(row![
             "Roll No",
             "Marks",
@@ -40,14 +48,18 @@ fn create_file(
         ])?;
 
         for (email, name, student_id) in enrollment.iter() {
+
             if !grades.contains_key(email) {
+
                 println!("\n\tKey {} not found!\n", email);
             }
+
             let current_grade = grades[email].as_str();
+
             let (current_grade, current_status) = match grades[email].as_str() {
                 "EX" => ("", "Y"),
                 "N/A" | "" => ("0.00", "N"),
-                _ => (current_grade, "N"),
+                _ => (current_grade, "N")
             };
 
             sheet_writer.append_row(row![
@@ -74,13 +86,15 @@ fn create_file(
 /// * `output_dir` - A string slice that holds the output directory
 /// * `gradebook` - A reference to a Gradebook struct
 /// * `enrollment` - A reference to an EnrollmentData struct
-///
+
 pub(crate) fn create_files(
-    output_dir: &str, gradebook: &config::Gradebook,
-    enrollment: &config::EnrollmentData,
+    output_dir : &str, gradebook : &config::Gradebook, enrollment : &config::EnrollmentData
 ) -> Result<(), Error> {
+
     with_temp_dir!(output_dir, {
+
         for grade in gradebook.keys() {
+
             create_file(grade, &gradebook[grade].1, enrollment)?;
         }
     });
