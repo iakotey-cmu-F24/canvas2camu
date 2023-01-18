@@ -1,15 +1,26 @@
 use std::io::Error;
 
 use simple_excel_writer::{blank, row, CellValue, Column, Row, Workbook};
+use lazy_static::lazy_static;
+use regex::Regex;
 
 use crate::config;
 use crate::utils::with_temp_dir;
 
 fn create_file(
-    filename : &str, grades : &config::GradeMap, enrollment : &config::EnrollmentData
+    file_name : &str, grades : &config::GradeMap, enrollment : &config::EnrollmentData
 ) -> Result<(), Error> {
 
-    let mut workbook = Workbook::create(&(format!("{}.xlsx", filename).replace(":", "-")));
+
+    let safe_file_name =  {
+        lazy_static! {
+            static ref PATH_FIX_RE: Regex = Regex::new(r#"[\\/~!#$%^&*{}<>:?|"-]"#).expect("Ian, fix the regex 🙄🙁😡");
+        }
+
+        PATH_FIX_RE.replace_all( file_name, "_") 
+    };
+
+    let mut workbook = Workbook::create(&(format!("{}.xlsx", safe_file_name).replace(":", "-")));
 
     let mut sheet = workbook.create_sheet(config::WRITER_SHEET_NAME);
 
@@ -50,8 +61,9 @@ fn create_file(
         for (email, name, student_id) in enrollment.iter() {
 
             if !grades.contains_key(email) {
-
-                println!("\n\tKey {} not found!\n", email);
+                // Todo: Refactor
+                println!("Warning: Student {student_id} with email {email} not found!\n");
+                continue;
             }
 
             let current_grade = grades[email].as_str();
@@ -93,9 +105,9 @@ pub(crate) fn create_files(
 
     with_temp_dir!(output_dir, {
 
-        for grade in gradebook.keys() {
+        for assignment_name in gradebook.keys() {
 
-            create_file(grade, &gradebook[grade].1, enrollment)?;
+            create_file(assignment_name, &gradebook[assignment_name].1, enrollment)?;
         }
     });
 
